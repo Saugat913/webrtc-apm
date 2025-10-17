@@ -3,7 +3,8 @@ mod config;
 mod error;
 
 pub use audio_processor::{
-    AudioProcessor, WebrtcApmAudioProcessingConfig, WebrtcApmNoiseSuppressionLevel,
+    AudioProcessor, WebrtcApmAudioProcessingConfig, WebrtcApmAudioProcessingConfigBuilder,
+    WebrtcApmNoiseSuppressionLevel,
 };
 
 pub use config::StreamConfig;

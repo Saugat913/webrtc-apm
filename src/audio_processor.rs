@@ -1,25 +1,25 @@
 use crate::{config::StreamConfig, error::WebrtcApmError};
 
 pub enum WebrtcApmNoiseSuppressionLevel {
-    WebrtcApmNsLow,
-    WebrtcApmNsModerate,
-    WebrtcApmNsHigh,
-    WebrtcApmNsVeryHigh,
+    Low,
+    Moderate,
+    High,
+    VeryHigh,
 }
 
 impl From<WebrtcApmNoiseSuppressionLevel> for webrtc_apm_sys::WebRtcApmNoiseSuppressionLevel {
     fn from(value: WebrtcApmNoiseSuppressionLevel) -> Self {
         match value {
-            WebrtcApmNoiseSuppressionLevel::WebrtcApmNsHigh => {
+            WebrtcApmNoiseSuppressionLevel::High => {
                 webrtc_apm_sys::WebRtcApmNoiseSuppressionLevel_WEBRTC_APM_NS_HIGH
             }
-            WebrtcApmNoiseSuppressionLevel::WebrtcApmNsLow => {
+            WebrtcApmNoiseSuppressionLevel::Low => {
                 webrtc_apm_sys::WebRtcApmNoiseSuppressionLevel_WEBRTC_APM_NS_LOW
             }
-            WebrtcApmNoiseSuppressionLevel::WebrtcApmNsModerate => {
+            WebrtcApmNoiseSuppressionLevel::Moderate => {
                 webrtc_apm_sys::WebRtcApmNoiseSuppressionLevel_WEBRTC_APM_NS_MODERATE
             }
-            WebrtcApmNoiseSuppressionLevel::WebrtcApmNsVeryHigh => {
+            WebrtcApmNoiseSuppressionLevel::VeryHigh => {
                 webrtc_apm_sys::WebRtcApmNoiseSuppressionLevel_WEBRTC_APM_NS_VERY_HIGH
             }
         }
@@ -33,7 +33,7 @@ impl Default for WebrtcApmAudioProcessingConfig {
     fn default() -> Self {
         let config = webrtc_apm_sys::WebRtcAudioProcessingConfig {
             enable_noise_suppression: true,
-            ns_level: WebrtcApmNoiseSuppressionLevel::WebrtcApmNsModerate.into(),
+            ns_level: WebrtcApmNoiseSuppressionLevel::Moderate.into(),
             enable_echo_cancellation: true,
             echo_mobile_mode: false,
             enable_high_pass_filter: true,
@@ -43,6 +43,32 @@ impl Default for WebrtcApmAudioProcessingConfig {
             agc_enable_limiter: true,
         };
         Self { config: config }
+    }
+}
+
+pub struct WebrtcApmAudioProcessingConfigBuilder {
+    cfg: webrtc_apm_sys::WebRtcAudioProcessingConfig,
+}
+
+impl WebrtcApmAudioProcessingConfigBuilder {
+    pub fn new() -> Self {
+        Self {
+            cfg: WebrtcApmAudioProcessingConfig::default().config,
+        }
+    }
+
+    pub fn noise_suppression_level(mut self, level: WebrtcApmNoiseSuppressionLevel) -> Self {
+        self.cfg.ns_level = level.into();
+        self
+    }
+
+    pub fn echo_cancellation(mut self, enable: bool) -> Self {
+        self.cfg.enable_echo_cancellation = enable;
+        self
+    }
+
+    pub fn build(self) -> WebrtcApmAudioProcessingConfig {
+        WebrtcApmAudioProcessingConfig { config: self.cfg }
     }
 }
 
